@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { prismaClient } from "index";
 import { hashSync, compareSync } from "bcrypt";
 import * as jwt from "jsonwebtoken";
+import { JWT_SECRET } from "utils/secrets";
 
 export const Signup = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
@@ -31,6 +32,6 @@ export const Login = async (req: Request, res: Response) => {
   if (!compareSync(password, user.password)) {
     return res.status(400).json({ message: "Invalid credentials" });
   }
-  const token = jwt.sign({ id: user.id }, "secret", { expiresIn: "1h" });
+  const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "1h" });
   res.json({ user, token });
 };
