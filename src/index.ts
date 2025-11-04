@@ -4,7 +4,8 @@ import bodyparser from "body-parser";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import cors from "cors";
-import { stat } from "fs";
+import rootRouter from "./routes";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const app = express();
 
@@ -18,18 +19,14 @@ app.use(bodyparser.json());
 app.use(cookieParser());
 app.use(compression());
 
+app.use(rootRouter);
+
 const server = http.createServer(app);
+
+export const prismaClient = new PrismaClient({
+  log: ["query", "info", "warn", "error"],
+});
 
 server.listen(8080, () => {
   console.log("Server is running on http://localhost:8080");
-});
-
-app.get("/", (req, res) => {
-  try {
-    console.log("Root endpoint hit");
-    res.status(200).send("Hello, World!");
-  } catch (error) {
-    console.error("Error handling root endpoint:", error);
-    res.status(500).send("Internal Server Error");
-  }
 });
